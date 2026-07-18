@@ -31,9 +31,13 @@ deploy:
     - chmod +x kubectl
     - mv kubectl /usr/local/bin/
     - mkdir -p ~/.kube
+    - echo "🔍 Verificando KUBECONFIG:"
+    - echo "$KUBECONFIG" | head -5
+    - echo "📄 Criando ~/.kube/config..."
     - echo "$KUBECONFIG" > ~/.kube/config
   script:
     - echo "🚀 Deployando no Kubernetes..."
+    - kubectl get nodes
     - kubectl set image deployment/meusite-devops meusite-devops=$DOCKER_IMAGE:$DOCKER_TAG
     - kubectl rollout status deployment/meusite-devops
     - echo "✅ Deploy concluído!"
