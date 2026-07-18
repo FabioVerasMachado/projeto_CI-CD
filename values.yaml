@@ -1,0 +1,24 @@
+gitlabUrl: https://gitlab.com/
+runnerRegistrationToken: GR1348941wy9i6Kdg8nLrHGhc5Z8s  # ← NOVO TOKEN!
+
+rbac:
+  create: true
+
+serviceAccount:
+  create: true
+  name: gitlab-runner
+
+runners:
+  privileged: true
+  image: alpine
+  namespace: default
+  config: |
+    [[runners]]
+      name = "kubernetes-runner"
+      url = "https://gitlab.com/"
+      token = "glrt-nKWNJICq"  # ← Este é o token do Runner (não muda!)
+      executor = "kubernetes"
+      [runners.kubernetes]
+        namespace = "default"
+        image = "alpine"
+        privileged = true
