@@ -4,7 +4,5 @@ stages:
 test-job:
   stage: test
   script:
-    - echo "🚀 O Runner está VIVO!"
-    - echo "✅ CI/CD funcionando perfeitamente!"
-    - echo "📦 Projeto: Mundo Invertido"
-    - echo "🔧 Executando no Kubernetes"
+    - echo "O Runner esta VIVO!"
+    - echo "CI/CD funcionando!"
