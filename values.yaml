@@ -12,13 +12,11 @@ runners:
   privileged: true
   image: alpine
   namespace: default
+  tags: minikube
   config: |
     [[runners]]
-      name = "kubernetes-runner"
-      url = "https://gitlab.com/"
-      token = "glrt-nKWNJICq"
-      executor = "kubernetes"
       [runners.kubernetes]
+        privileged = true
+        service_account = "gitlab-runner"
         namespace = "default"
         image = "alpine"
-        privileged = true
