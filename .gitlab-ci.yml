@@ -24,7 +24,7 @@ build:
 
 deploy:
   stage: deploy
-  image: bitnami/kubectl:latest
+  image: alpine/k8s:1.28  # ← Imagem com shell e kubectl
   script:
     - echo "🚀 Deployando no Kubernetes..."
     - kubectl set image deployment/meusite-devops meusite-devops=$DOCKER_IMAGE:$DOCKER_TAG
