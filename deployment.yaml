@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meusite-devops
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: meusite-devops
+  template:
+    metadata:
+      labels:
+        app: meusite-devops
+    spec:
+      containers:
+      - name: meusite-devops
+        image: veras71/meusite-devops:2.0
+        ports:
+        - containerPort: 80
+        # ADICIONE ESTA PARTE:
+        resources:
+          requests:
+            cpu: "100m"      # 0.1 vCPU
+            memory: "64Mi"   # 64 MB
+          limits:
+            cpu: "200m"      # 0.2 vCPU (máximo)
+            memory: "128Mi"  # 128 MB (máximo)
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
