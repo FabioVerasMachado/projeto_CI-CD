@@ -30,6 +30,8 @@ deploy:
     - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
     - chmod +x kubectl
     - mv kubectl /usr/local/bin/
+    - mkdir -p ~/.kube
+    - echo "$KUBECONFIG" > ~/.kube/config
   script:
     - echo "🚀 Deployando no Kubernetes..."
     - kubectl set image deployment/meusite-devops meusite-devops=$DOCKER_IMAGE:$DOCKER_TAG
