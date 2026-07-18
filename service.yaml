@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: meusite-devops-service
+  name: meusite-devops
 spec:
   selector:
     app: meusite-devops
   ports:
   - port: 80
     targetPort: 80
-  type: NodePort
+  type: LoadBalancer

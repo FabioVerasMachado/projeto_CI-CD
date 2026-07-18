@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: meusite-devops
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
       app: meusite-devops
@@ -14,17 +14,16 @@ spec:
     spec:
       containers:
       - name: meusite-devops
-        image: veras71/meusite-devops:2.0
+        image: veras71/meusite-devops:latest
         ports:
         - containerPort: 80
-        # ADICIONE ESTA PARTE:
         resources:
           requests:
-            cpu: "100m"      # 0.1 vCPU
-            memory: "64Mi"   # 64 MB
+            cpu: "100m"
+            memory: "64Mi"
           limits:
-            cpu: "200m"      # 0.2 vCPU (máximo)
-            memory: "128Mi"  # 128 MB (máximo)
+            cpu: "200m"
+            memory: "128Mi"
         livenessProbe:
           httpGet:
             path: /

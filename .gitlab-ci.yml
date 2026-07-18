@@ -24,11 +24,17 @@ build:
 
 deploy:
   stage: deploy
-  image: alpine/k8s:1.28  # ← Imagem com shell e kubectl
+  image: bitnami/kubectl:latest
   script:
     - echo "🚀 Deployando no Kubernetes..."
     - kubectl set image deployment/meusite-devops meusite-devops=$DOCKER_IMAGE:$DOCKER_TAG
     - kubectl rollout status deployment/meusite-devops
     - echo "✅ Deploy concluído!"
+  before_script:
+    - echo "#!/bin/sh" > /tmp/kubectl.sh
+    - echo "kubectl set image deployment/meusite-devops meusite-devops=$DOCKER_IMAGE:$DOCKER_TAG" >> /tmp/kubectl.sh
+    - echo "kubectl rollout status deployment/meusite-devops" >> /tmp/kubectl.sh
+    - chmod +x /tmp/kubectl.sh
+  shell: /tmp/kubectl.sh
   only:
     - main
