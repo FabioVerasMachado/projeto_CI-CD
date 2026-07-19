@@ -1,93 +1,278 @@
-# ProjetoMiniKube
+markdown
+
+# 🎓 Mundo Invertido - CI/CD com GitLab + Kubernetes
+
+![DevOps](https://img.shields.io/badge/DevOps-Pipeline-blue)
+![Kubernetes](https://img.shields.io/badge/Kubernetes-1.28-blue)
+![GitLab](https://img.shields.io/badge/GitLab-CI%2FCD-orange)
+![Docker](https://img.shields.io/badge/Docker-26.0-blue)
+
+## 📋 Sobre o Projeto
+
+Este projeto é uma demonstração prática de um pipeline **CI/CD completo** utilizando:
+
+- **GitLab** como repositório e orquestrador de CI/CD
+- **Kubernetes (Minikube)** para orquestração de containers
+- **Docker** para containerização da aplicação
+- **Docker Hub** como registro de imagens
+
+O projeto implementa o site "Mundo Invertido" (baseado na série Stranger Things) com um pipeline automatizado que:
+
+1. 🔨 **Builda** a imagem Docker automaticamente
+2. 📤 **Envia** para o Docker Hub
+3. 🚀 **Deploya** no Kubernetes com zero downtime
+
+---
+
+## 🏗️ Arquitetura do Projeto
+
+[Desenvolvedor] → [GitLab] → [Pipeline CI/CD] → [Kubernetes] → [Site no Ar]
+↓ ↓ ↓ ↓ ↓
+Commit Repositório Build + Deploy Orquestração Acessível 24/7
+text
 
 
+### 🛠️ Tecnologias Utilizadas
 
-## Getting started
+| Tecnologia | Versão | Finalidade |
+|------------|--------|------------|
+| **GitLab** | 19.2.0 | CI/CD + Repositório |
+| **Kubernetes** | 1.28 | Orquestração de containers |
+| **Minikube** | v1.35.0 | Cluster Kubernetes local |
+| **Docker** | 26.0 | Containerização |
+| **Docker Hub** | - | Registro de imagens |
+| **Apache HTTP Server** | latest | Servidor Web |
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+---
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+## 📁 Estrutura do Projeto
 
-## Add your files
+projetominikube/
+├── .gitlab-ci.yml # Pipeline CI/CD
+├── Dockerfile # Configuração da imagem Docker
+├── deployment.yaml # Deployment no Kubernetes
+├── service.yaml # Service LoadBalancer
+├── hpa.yaml # Horizontal Pod Autoscaler
+├── values.yaml # Configuração do GitLab Runner
+├── kubeconfig.yaml # Conexão com o cluster
+├── index.html # Página principal
+├── assets/ # CSS, JS, imagens e músicas
+│ ├── css/
+│ ├── js/
+│ ├── images/
+│ └── musics/
+└── README.md # Documentação
+text
 
-* [Create](https://docs.gitlab.com/user/project/repository/web_editor/#create-a-file) or [upload](https://docs.gitlab.com/user/project/repository/web_editor/#upload-a-file) files
-* [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
 
-```
-cd existing_repo
-git remote add origin https://gitlab.com/FabioVerasMachado/projetominikube.git
-git branch -M main
-git push -uf origin main
-```
+---
 
-## Integrate with your tools
+## 🚀 Pipeline CI/CD
 
-* [Set up project integrations](https://gitlab.com/FabioVerasMachado/projetominikube/-/settings/integrations)
+### O que o pipeline faz:
 
-## Collaborate with your team
+| Stage | Job | Descrição |
+|-------|-----|-----------|
+| **build** | build | Constrói a imagem Docker e envia para o Docker Hub |
+| **deploy** | deploy | Atualiza o deployment no Kubernetes |
 
-* [Invite team members and collaborators](https://docs.gitlab.com/user/project/members/)
-* [Create a new merge request](https://docs.gitlab.com/user/project/merge_requests/creating_merge_requests/)
-* [Automatically close issues from merge requests](https://docs.gitlab.com/user/project/issues/managing_issues/#closing-issues-automatically)
-* [Enable merge request approvals](https://docs.gitlab.com/user/project/merge_requests/approvals/)
-* [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+### Fluxo do pipeline:
 
-## Test and Deploy
+```yaml
+stages:
+  - build
+  - deploy
 
-Use the built-in continuous integration in GitLab.
+build:
+  stage: build
+  image: docker:latest
+  script:
+    - docker build -t veras71/meusite-devops:$CI_COMMIT_SHORT_SHA .
+    - docker push veras71/meusite-devops:$CI_COMMIT_SHORT_SHA
 
-* [Get started with GitLab CI/CD](https://docs.gitlab.com/ci/quick_start/)
-* [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/user/application_security/sast/)
-* [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/topics/autodevops/requirements/)
-* [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/user/clusters/agent/)
-* [Set up protected environments](https://docs.gitlab.com/ci/environments/protected_environments/)
+deploy:
+  stage: deploy
+  script:
+    - kubectl set image deployment/meusite-devops meusite-devops=veras71/meusite-devops:$CI_COMMIT_SHORT_SHA
+    - kubectl rollout status deployment/meusite-devops
 
-***
+📋 Pré-requisitos
+Para rodar localmente:
 
-# Editing this README
+    Docker (26.0+)
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+    Minikube (v1.35.0+)
 
-## Suggestions for a good README
+    kubectl (1.28+)
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+    GitLab (19.2.0+)
 
-## Name
-Choose a self-explaining name for your project.
+    Helm (3.0+)
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+Variáveis de ambiente necessárias no GitLab:
+Variável	Descrição
+DOCKER_PASSWORD	Token de acesso do Docker Hub
+KUBECONFIG	Configuração do cluster Kubernetes
+🔧 Configuração do GitLab Runner
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+O GitLab Runner está configurado com executor Kubernetes, montando o socket do Docker:
+yaml
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+[[runners.kubernetes.volumes.host_path]]
+  name = "docker-sock"
+  mount_path = "/var/run/docker.sock"
+  host_path = "/var/run/docker.sock"
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+Permissões no Kubernetes:
+bash
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+kubectl create clusterrolebinding gitlab-runner-admin \
+  --clusterrole=cluster-admin \
+  --serviceaccount=default:gitlab-runner
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+🌐 Como Acessar o Site
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+Após o deploy, o site fica disponível em:
+bash
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+# IP do seu computador na rede (port-forward)
+http://192.168.0.97:8080
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+# IP do Minikube (NodePort)
+minikube service meusite-devops --url
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+🧪 Testando o Pipeline
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+    Faça uma alteração no código
 
-## License
-For open source projects, say how it is licensed.
+    Commit e push para o GitLab:
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+bash
+
+git add .
+git commit -m "Minha nova feature"
+git push origin main
+
+    O pipeline será disparado automaticamente
+
+    Acompanhe em CI/CD → Pipelines
+
+📊 Monitoramento
+Visualizar pods:
+bash
+
+kubectl get pods -w
+
+Visualizar HPA:
+bash
+
+kubectl get hpa -w
+
+Ver logs do runner:
+bash
+
+kubectl logs -l app=gitlab-runner
+
+🛠️ Comandos Úteis
+Gerenciamento do Minikube:
+bash
+
+minikube start          # Iniciar o cluster
+minikube stop           # Parar o cluster
+minikube status         # Verificar status
+minikube dashboard      # Abrir o dashboard
+
+Gerenciamento do Kubernetes:
+bash
+
+kubectl get pods        # Listar pods
+kubectl get deployments # Listar deployments
+kubectl get svc         # Listar serviços
+kubectl logs <pod>      # Ver logs de um pod
+
+Gerenciamento do GitLab Runner:
+bash
+
+helm install gitlab-runner gitlab/gitlab-runner -f values.yaml
+kubectl logs -l app=gitlab-runner
+
+🎯 Funcionalidades Implementadas
+
+    ✅ CI/CD Automatizado com GitLab
+
+    ✅ Build de Imagem Docker automático
+
+    ✅ Push para Docker Hub automatizado
+
+    ✅ Deploy no Kubernetes com zero downtime
+
+    ✅ Horizontal Pod Autoscaler (HPA)
+
+    ✅ Health Checks (Liveness e Readiness Probes)
+
+    ✅ Redundância com 2-10 pods
+
+    ✅ Load Balancer para acesso externo
+
+    ✅ Dashboard no GitLab para monitoramento
+
+🐛 Troubleshooting
+Erro: Cannot connect to Docker daemon
+
+Solução: Verificar se o socket do Docker está montado no pod.
+Erro: User cannot get resource deployments
+
+Solução: Aplicar permissões RBAC:
+bash
+
+kubectl create clusterrolebinding gitlab-runner-admin \
+  --clusterrole=cluster-admin \
+  --serviceaccount=default:gitlab-runner
+
+Erro: file name too long
+
+Solução: Verificar a formatação da variável KUBECONFIG (usar uma única linha).
+📚 Referências
+
+    GitLab CI/CD Documentation
+
+    Kubernetes Documentation
+
+    Docker Documentation
+
+    Minikube Documentation
+
+👨‍💻 Autor
+
+Fabio Veras Machado
+
+    GitLab: @FabioVerasMachado
+
+    GitHub: @FabioVerasMachado
+
+📄 Licença
+
+Este projeto é para fins educacionais.
+🙏 Agradecimentos
+
+    DIO - Inspiração para o site "Mundo Invertido"
+
+    GitLab - Plataforma de CI/CD
+
+    Kubernetes - Orquestração de containers
+
+    Docker - Containerização
+
+🚀 Próximos Passos
+
+    Integrar com ArgoCD para GitOps
+
+    Adicionar monitoramento com Prometheus + Grafana
+
+    Configurar GitLab Pages para documentação
+
+    Implementar testes automatizados no pipeline
+
+    Adicionar notificações no Slack
+
+Feito com ❤️ e muito DevOps!
