@@ -1,5 +1,5 @@
 gitlabUrl: https://gitlab.com/
-runnerRegistrationToken: GR1348941wy9i6Kdg8nLrHGhc5Z8s
+runnerRegistrationToken: SEU_TOKEN_AQUI  # ← Substitua pelo placeholder
 
 rbac:
   create: true
@@ -15,16 +15,11 @@ runners:
   tags: minikube
   config: |
     [[runners]]
-      name = "kubernetes-runner"
+      name = "docker-runner"
       url = "https://gitlab.com/"
-      token = "glrt-nKWNJICq"
-      executor = "kubernetes"
-      [runners.kubernetes]
-        namespace = "default"
+      token = "SEU_TOKEN_AQUI"  # ← Substitua pelo placeholder
+      executor = "docker"
+      [runners.docker]
         image = "alpine"
         privileged = true
-        service_account = "gitlab-runner"
-        [[runners.kubernetes.volumes.host_path]]
-          name = "docker-sock"
-          mount_path = "/var/run/docker.sock"
-          host_path = "/var/run/docker.sock"
+        volumes = ["/cache", "/var/run/docker.sock:/var/run/docker.sock"]
